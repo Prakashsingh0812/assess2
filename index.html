@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Form Example</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .input-field {
+        padding: 10px;
+        margin-right: 10px;
+      }
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+      button.remove {
+        background-color: #dc3545;
+      }
+      .output {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState } = React;
+
+      function DynamicForm() {
+        const [formFields, setFormFields] = useState([{ name: "", email: "" }]);
+
+        const handleInputChange = (index, event) => {
+          const values = [...formFields];
+          values[index][event.target.name] = event.target.value;
+          setFormFields(values);
+        };
+
+        const handleAddField = () => {
+          setFormFields([...formFields, { name: "", email: "" }]);
+        };
+
+        const handleRemoveField = (index) => {
+          const values = [...formFields];
+          values.splice(index, 1);
+          setFormFields(values);
+        };
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          console.log("Form Data: ", formFields);
+        };
+
+        return (
+          <form onSubmit={handleSubmit}>
+            <h2>Dynamic Form</h2>
+            {formFields.map((field, index) => (
+              <div className="form-group" key={index}>
+                <input
+                  className="input-field"
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  value={field.name}
+                  onChange={(event) => handleInputChange(index, event)}
+                />
+                <input
+                  className="input-field"
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={field.email}
+                  onChange={(event) => handleInputChange(index, event)}
+                />
+                <button type="button" className="remove" onClick={() => handleRemoveField(index)}>
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button type="button" onClick={handleAddField}>
+              Add Field
+            </button>
+            <button type="submit">Submit</button>
+
+            <div className="output">
+              <h3>Form Data Preview:</h3>
+              <pre>{JSON.stringify(formFields, null, 2)}</pre>
+            </div>
+          </form>
+        );
+      }
+
+      ReactDOM.render(<DynamicForm />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
